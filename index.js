@@ -3,6 +3,7 @@ const { parse } = require("csv-parse");
 const sha256 = require('sha256');
 const { createHash } = require('crypto');
 const readlineSync = require('readline-sync');
+const process = require('process'); 
 
 const readFromFile = (filePath, hashedFile) => {
   fs.createReadStream(filePath)
@@ -50,14 +51,15 @@ const passwordChecker = () => {
     .on("data", function (row) {
       if(username == row[0] && checkPassword == row[2]) {
         console.log("Hello " + row[1])
+        process.exit(0); 
       } 
-
     })
     .on("error", function (error) {
       console.log(error.message);
     })
     .on("end", function () {
       console.log("finished");
+      console.log("Invalid Username or Password!")
     });
 }
 
