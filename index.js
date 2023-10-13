@@ -12,7 +12,7 @@ const readFromFile = (filePath, hashedFile) => {
   row[3] = row[row.length - 1].trim()
 
   if(row[0] && row[1] && row[2] && row[3]){
-    fs.appendFileSync(hashedFile, row[0] + ", " + row[1] + ", " + sha256(row[2]) + ", " + row[3] + "\n", "utf-8")
+    fs.appendFileSync(hashedFile, row[0] + "," + row[1] + "," + sha256(row[2]) + "," + row[3] + "\n", "utf-8")
     console.log(row)
   }
 
@@ -29,7 +29,7 @@ const displayFile = (displayPath) => {
   fs.createReadStream(displayPath)
   .pipe(parse({ delimiter: "," }))
   .on("data", function (row) {
-    console.log(row[0] + ", " + row[1] + ", " + sha256(row[2]) + ", " + row[3])
+    console.log(row[0] + "," + row[1] + "," + sha256(row[2]) + "," + row[3])
   })
   .on("error", function (error) {
     console.log(error.message);
@@ -41,24 +41,24 @@ const displayFile = (displayPath) => {
 
 const passwordChecker = () => {
   // YOU NEED TO MAKE SURE WE ARE MATCHING THE CORRECT DATA TYPES!
-  let username = readlineSync.question();
-  let password = readlineSync.question();
-  
-  fs.createReadStream("hash_database.csv")
-  .pipe(parse({ delimiter: ","}))
-  .on("data", function (row) {
-    if(username == row[0] && password == row[2]) {
-      console.log("Hello" + row[3])
-    } else {
-      console.log("Incorrect username or password")
-    }
-  })
-  .on("error", function (error) {
-    console.log(error.message);
-  })
-  .on("end", function () {
-    console.log("finished");
-  });
+  let username = readlineSync.question("Enter Username: ");
+  let password = readlineSync.question("Enter Password: ");
+  let checkPassword = sha256(password)
+  let flag = 0;
+    fs.createReadStream("hash_database.csv")
+    .pipe(parse({ delimiter: ","}))
+    .on("data", function (row) {
+      if(username == row[0] && checkPassword == row[2]) {
+        console.log("Hello " + row[1])
+      } 
+
+    })
+    .on("error", function (error) {
+      console.log(error.message);
+    })
+    .on("end", function () {
+      console.log("finished");
+    });
 }
 
 const menu = () => {
